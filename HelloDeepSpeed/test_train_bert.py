@@ -109,5 +109,5 @@ def test_model_checkpointing(checkpoint_dir: str):
     train(**train_params)
 
 
-test_masking_stats()
-# test_model_checkpointing(checkpoint_dir="checkpoint_dir")
+# test_masking_stats()
+test_model_checkpointing(checkpoint_dir="checkpoint_dir")
