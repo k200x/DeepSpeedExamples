@@ -110,4 +110,4 @@ def test_model_checkpointing(checkpoint_dir: str):
 
 
 test_masking_stats()
-test_model_checkpointing(checkpoint_dir="checkpoint_dir")
+# test_model_checkpointing(checkpoint_dir="checkpoint_dir")
