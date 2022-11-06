@@ -1,0 +1,42 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="5">
+            <item index="0" class="java.lang.String" itemvalue="psycopg2" />
+            <item index="1" class="java.lang.String" itemvalue="redis" />
+            <item index="2" class="java.lang.String" itemvalue="Flask" />
+            <item index="3" class="java.lang.String" itemvalue="unittest" />
+            <item index="4" class="java.lang.String" itemvalue="kfp" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="N802" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="xkool_site.statistics_app.component.xlsx.data_sheets.indicator_sheet.BuildingResidenceMapping" />
+          <option value="str.is_there_one_group" />
+          <option value="str.write_one_file" />
+          <option value="str.write_left_to_one_file" />
+          <option value="str.framework_key_endpoint" />
+          <option value="str.toggle" />
+          <option value="str.forbidden_suffix" />
+          <option value="recognizer.util.geom_util.cad_recognizer" />
+          <option value="code_testing.test.*" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="TsLint" enabled="true" level="WARNING" enabled_by_default="true" />
+  </profile>
+</component>

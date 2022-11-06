@@ -37,7 +37,8 @@ def test_masking_stats(tol: float = 1e-3):
         total_tokens += batch["attention_mask"].sum().item() - (
             2 * batch["attention_mask"].size(0)
         )
-        masked_tokens += (batch["tgt_tokens"] != tokenizer.pad_token_id).sum().item()
+        masked_tokens += (batch["tgt_tokens"] !=
+                          tokenizer.pad_token_id).sum().item()
         random_or_unmasked = (
             batch["tgt_tokens"] != tokenizer.pad_token_id
         ).logical_and(batch["src_tokens"] != tokenizer.mask_token_id)
@@ -106,3 +107,7 @@ def test_model_checkpointing(checkpoint_dir: str):
     train_params["load_checkpoint_dir"] = str(exp_dir)
     train_params["num_iterations"] = 10
     train(**train_params)
+
+
+test_masking_stats()
+test_model_checkpointing(checkpoint_dir="checkpoint_dir")
