@@ -196,6 +196,7 @@ class WikiTextMLMDataset(Dataset):
             record
 
     """
+
     def __init__(
         self,
         dataset: datasets.arrow_dataset.Dataset,
@@ -854,7 +855,10 @@ def train(
 
 
 if __name__ == "__main__":
+    from datetime import datetime
+    start_t = datetime.now()
     torch.manual_seed(42)
     np.random.seed(0)
     random.seed(0)
     fire.Fire(train)
+    print(datetime.now() - start_t)
