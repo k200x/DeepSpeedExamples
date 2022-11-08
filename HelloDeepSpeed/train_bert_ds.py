@@ -593,7 +593,7 @@ def load_model_checkpoint(
 
 
 def train(
-        checkpoint_dir: str = None,
+        checkpoint_dir: str = "save_checkpoint_single_node",
         load_checkpoint_dir: str = None,
         # Dataset Parameters
         mask_prob: float = 0.15,
