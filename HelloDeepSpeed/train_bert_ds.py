@@ -609,8 +609,8 @@ def train(
         dropout: float = 0.1,
         # Training Parameters
         batch_size: int = 8,
-        num_iterations: int = 10000,
-        checkpoint_every: int = 1000,
+        num_iterations: int = 100,
+        checkpoint_every: int = 100,
         log_every: int = 10,
         local_rank: int = -1,
 ) -> pathlib.Path:
