@@ -6,3 +6,5 @@ loguru==0.5.3
 sh==1.14.2
 pytest==6.2.5
 tqdm==4.62.3
+deepspeed
+mpi4py

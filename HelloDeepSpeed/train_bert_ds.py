@@ -593,7 +593,7 @@ def load_model_checkpoint(
 
 
 def train(
-        checkpoint_dir: str = "save_checkpoint_single_node",
+        checkpoint_dir: str = "save_deepspeed_checkpoint",
         load_checkpoint_dir: str = None,
         # Dataset Parameters
         mask_prob: float = 0.15,
@@ -747,7 +747,6 @@ def train(
     # Tensorboard writer
     if is_rank_0():
         tb_dir = exp_dir / "tb_dir"
-        assert tb_dir.exists()
         summary_writer = SummaryWriter(log_dir=tb_dir)
     ################################
     ###### Create Datasets #########

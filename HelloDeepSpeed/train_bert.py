@@ -483,8 +483,7 @@ def create_experiment_dir(checkpoint_dir: pathlib.Path,
                     " is strongly advised to use"
                     " version control.")
     # Finally create the Tensorboard Dir
-    tb_dir = exp_dir / "tb_dir"
-    tb_dir.mkdir()
+    tb_dir = "tensorboard_log"
     return exp_dir
 
 
@@ -550,7 +549,7 @@ def load_model_checkpoint(
 ######################################################################
 
 def train(
-        checkpoint_dir: str = "save_checkpoint_single_node",
+        checkpoint_dir: str = "save_pytorch_checkpoint",
         load_checkpoint_dir: str = None,
         # Dataset Parameters
         mask_prob: float = 0.15,
@@ -566,7 +565,7 @@ def train(
         dropout: float = 0.1,
         # Training Parameters
         batch_size: int = 8,
-        num_iterations: int = 10,
+        num_iterations: int = 50,
         checkpoint_every: int = 10,
         log_every: int = 10,
         local_rank: int = -1,
@@ -575,6 +574,7 @@ def train(
     (transformer encoder only) model for MLM Task
 
     Args:
+        # --------- Dataset Params
         checkpoint_dir (str):
             The base experiment directory to save experiments to
         mask_prob (float, optional):
@@ -593,6 +593,7 @@ def train(
             The number of layers in the Bert model. Defaults to 6.
         num_heads (int, optional):
             Number of attention heads to use. Defaults to 8.
+        # --------- Model Params
         ff_dim (int, optional):
             Size of the intermediate dimension in the FF layer.
             Defaults to 512.
@@ -601,6 +602,7 @@ def train(
             Defaults to 256.
         dropout (float, optional):
             Amout of Dropout to use. Defaults to 0.1.
+        # --------- Training Params
         batch_size (int, optional):
             The minibatch size. Defaults to 8.
         num_iterations (int, optional):
@@ -690,8 +692,7 @@ def train(
         checkpoint_every = hparams.get("checkpoint_every", checkpoint_every)
         exp_dir = load_checkpoint_dir
     # Tensorboard writer
-    tb_dir = exp_dir / "tb_dir"
-    assert tb_dir.exists()
+    tb_dir = "tensorboard_log"
     summary_writer = SummaryWriter(log_dir=tb_dir)
     ################################
     ###### Create Datasets #########
@@ -743,6 +744,8 @@ def train(
     model.train()
     losses = []
     for step, batch in enumerate(data_iterator, start=start_step):
+        print('-' * 20)
+        print(batch)
         if step >= num_iterations:
             break
         optimizer.zero_grad()
@@ -760,10 +763,15 @@ def train(
             logger.info("Loss: {0:.4f}".format(np.mean(losses)))
             summary_writer.add_scalar(f"Train/loss", np.mean(losses), step)
         if step % checkpoint_every == 0:
+            print("model state_dict:")
+            print(model.state_dict())
             state_dict = {
                 "model": model.state_dict(),
                 "optimizer": optimizer.state_dict(),
             }
+            print("save model to {0}".format(
+                str(exp_dir / f"checkpoint.iter_{step}.pt"))
+            )
             torch.save(obj=state_dict,
                        f=str(exp_dir / f"checkpoint.iter_{step}.pt"))
             logger.info("Saved model to {0}".format(
