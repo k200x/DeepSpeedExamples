@@ -549,7 +549,6 @@ def load_model_checkpoint(
 ######################## Driver Functions ############################
 ######################################################################
 
-
 def train(
         checkpoint_dir: str = "save_checkpoint_single_node",
         load_checkpoint_dir: str = None,
