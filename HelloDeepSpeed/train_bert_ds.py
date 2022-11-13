@@ -787,13 +787,13 @@ def train(
         },
         "fp16": {
             "enabled": True
-        },
-        "zero_optimization": {
-            "stage": 1,
-            "offload_optimizer": {
-                "device": "cpu"
-            }
         }
+        # "zero_optimization": {
+        #     "stage": 1,
+        #     "offload_optimizer": {
+        #         "device": "nvme"
+        #     }
+        # }
     }
     model, _, _, _ = deepspeed.initialize(model=model,
                                           model_parameters=model.parameters(),
