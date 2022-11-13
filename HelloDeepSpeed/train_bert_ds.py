@@ -861,7 +861,26 @@ def train(
 
 
 if __name__ == "__main__":
-    async def boot_training():
+    # async def boot_training():
+    #     import datetime
+    #     start_t = datetime.datetime.utcnow()
+    #     torch.manual_seed(42)
+    #     np.random.seed(0)
+    #     random.seed(0)
+    #     fire.Fire(train)
+    #     print(datetime.datetime.utcnow() - start_t)
+    #
+    # tasks = [
+    #     timer(0.1),
+    #     boot_training()
+    # ]
+    #
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(asyncio.wait(tasks))
+
+    from multiprocessing import Process
+
+    def func1():
         import datetime
         start_t = datetime.datetime.utcnow()
         torch.manual_seed(42)
@@ -870,10 +889,14 @@ if __name__ == "__main__":
         fire.Fire(train)
         print(datetime.datetime.utcnow() - start_t)
 
-    tasks = [
-        timer(0.1),
-        boot_training()
-    ]
+    def func2():
+        t = timer(0.1)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(t)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.gather(*tasks))
+    process = [
+        Process(target=func1),
+        Process(target=func2),
+    ]
+    [p.start() for p in process]
+    [p.join() for p in process]

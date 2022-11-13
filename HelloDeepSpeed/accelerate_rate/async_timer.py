@@ -6,11 +6,11 @@ from pynvml import *
 
 gpu_count = 0
 
-try:
-    pynvml.nvmlInit()
-    gpu_count = nvmlDeviceGetCount()
-except NVMLError as e:
-    print(str(e))
+# try:
+#     pynvml.nvmlInit()
+#     gpu_count = nvmlDeviceGetCount()
+# except NVMLError as e:
+#     print(str(e))
 
 
 @dataclass
@@ -25,14 +25,17 @@ class GpuPayload:
         return self.utilization
 
 
-def get_gpu_payload(x, i):
+def get_gpu_payload(pynvml_handler, x, i):
     print(round(x * i, 2))
 
     try:
+
+        gpu_count = nvmlDeviceGetCount()
+
         gpu_payloads = []
         for gpu_idx in range(0, gpu_count):
             handle = nvmlDeviceGetHandleByIndex(gpu_idx)
-            use = pynvml.nvmlDeviceGetUtilizationRates(handle)
+            use = pynvml_handler.nvmlDeviceGetUtilizationRates(handle)
 
             # gpu_info = nvmlDeviceGetMemoryInfo(handle)
             # gpu_temperature = nvmlDeviceGetTemperature(
@@ -52,18 +55,23 @@ def get_gpu_payload(x, i):
         print(str(e))
 
 
-def write_log_to_file(file_handler, x, i):
+def write_log_to_file(pynvml_handler, file_handler, x, i):
+    print("-" * 100)
     [
-        file_handler.write(str(payload.utilization) + "\n") for payload in get_gpu_payload(x, i)
+        file_handler.write(" --- " + str(payload.utilization)) for payload in get_gpu_payload(pynvml_handler, x, i)
     ]
+    file_handler.write("\n")
 
 
 async def timer(x):
+    pynvml.nvmlInit()
+
     with open("gpu_payload_log.txt", "w") as file_handler:
         for i in range(0, 1000):
+            print(i)
             fu = asyncio.ensure_future(asyncio.sleep(x))
             fu.add_done_callback(
-                lambda output: write_log_to_file(file_handler, x, i)
+                lambda output: write_log_to_file(pynvml, file_handler, x, i)
             )
             await fu
 
