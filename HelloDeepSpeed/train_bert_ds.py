@@ -1,7 +1,7 @@
 """
 Modified version of train_bert.py that adds DeepSpeed
 """
-
+import asyncio
 import os
 import datetime
 import json
@@ -31,8 +31,12 @@ from transformers.models.roberta.modeling_roberta import (
     RobertaPreTrainedModel,
 )
 
+from accelerate_rate.async_timer import timer
+
 
 def is_rank_0() -> bool:
+    print("-" * 200)
+    print(int(os.environ.get("RANK", "0")))
     return int(os.environ.get("RANK", "0")) == 0
 
 
@@ -609,10 +613,10 @@ def train(
         dropout: float = 0.1,
         # Training Parameters
         batch_size: int = 8,
-        num_iterations: int = 10,
+        num_iterations: int = 150,
         checkpoint_every: int = 10,
         log_every: int = 10,
-        local_rank: int = -1,
+        local_rank: int = 0,
 ) -> pathlib.Path:
     """Trains a [Bert style](https://arxiv.org/pdf/1810.04805.pdf)
     (transformer encoder only) model for MLM Task
@@ -668,6 +672,9 @@ def train(
         pathlib.Path: The final experiment directory
 
     """
+    print("device:")
+    print("-" * 200)
+    print(torch.device("cuda", local_rank))
     device = (torch.device("cuda", local_rank) if (local_rank > -1)
               and torch.cuda.is_available() else torch.device("cpu"))
     ################################
@@ -787,13 +794,13 @@ def train(
         },
         "fp16": {
             "enabled": True
+        },
+        "zero_optimization": {
+            "stage": 1,
+            "offload_optimizer": {
+                "device": "nvme"
+            }
         }
-        # "zero_optimization": {
-        #     "stage": 1,
-        #     "offload_optimizer": {
-        #         "device": "nvme"
-        #     }
-        # }
     }
     model, _, _, _ = deepspeed.initialize(model=model,
                                           model_parameters=model.parameters(),
@@ -854,10 +861,19 @@ def train(
 
 
 if __name__ == "__main__":
-    import datetime
-    start_t = datetime.datetime.utcnow()
-    torch.manual_seed(42)
-    np.random.seed(0)
-    random.seed(0)
-    fire.Fire(train)
-    print(datetime.datetime.utcnow() - start_t)
+    async def boot_training():
+        import datetime
+        start_t = datetime.datetime.utcnow()
+        torch.manual_seed(42)
+        np.random.seed(0)
+        random.seed(0)
+        fire.Fire(train)
+        print(datetime.datetime.utcnow() - start_t)
+
+    tasks = [
+        timer(0.1),
+        boot_training()
+    ]
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.gather(*tasks))

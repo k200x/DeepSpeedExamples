@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import json
 import pathlib
@@ -23,6 +24,8 @@ from transformers.models.roberta.modeling_roberta import (
     RobertaLMHead,
     RobertaPreTrainedModel,
 )
+
+from accelerate_rate.async_timer import timer
 
 logger = loguru.logger
 
@@ -565,10 +568,10 @@ def train(
         dropout: float = 0.1,
         # Training Parameters
         batch_size: int = 8,
-        num_iterations: int = 50,
+        num_iterations: int = 150,
         checkpoint_every: int = 10,
         log_every: int = 10,
-        local_rank: int = -1,
+        local_rank: int = 1,
 ) -> pathlib.Path:
     """Trains a [Bert style](https://arxiv.org/pdf/1810.04805.pdf)
     (transformer encoder only) model for MLM Task
@@ -744,8 +747,8 @@ def train(
     model.train()
     losses = []
     for step, batch in enumerate(data_iterator, start=start_step):
-        print('-' * 20)
-        print(batch)
+        # print('-' * 20)
+        # print(batch)
         if step >= num_iterations:
             break
         optimizer.zero_grad()
@@ -764,7 +767,7 @@ def train(
             summary_writer.add_scalar(f"Train/loss", np.mean(losses), step)
         if step % checkpoint_every == 0:
             print("model state_dict:")
-            print(model.state_dict())
+            # print(model.state_dict())
             state_dict = {
                 "model": model.state_dict(),
                 "optimizer": optimizer.state_dict(),
@@ -791,6 +794,10 @@ def train(
 
 
 if __name__ == "__main__":
+    t = timer(0.1)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(t)
+
     import datetime
     start_t = datetime.datetime.utcnow()
     torch.manual_seed(42)
