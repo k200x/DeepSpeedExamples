@@ -55,10 +55,12 @@ def get_gpu_payload(pynvml_handler, x, i):
         print(str(e))
 
 
-def write_log_to_file(pynvml_handler, file_handler, x, i):
+# def write_log_to_file(pynvml_handler, file_handler, x, i):
+def write_log_to_file(file_handler, payloads):
     print("-" * 100)
     [
-        file_handler.write(" --- " + str(payload.utilization)) for payload in get_gpu_payload(pynvml_handler, x, i)
+        # file_handler.write(" --- " + str(payload.utilization)) for payload in get_gpu_payload(pynvml_handler, x, i)
+        file_handler.write(" --- " + str(payload.utilization)) for payload in payloads
     ]
     file_handler.write("\n")
 
@@ -70,8 +72,13 @@ async def timer(x):
         for i in range(0, 1000):
             print(i)
             fu = asyncio.ensure_future(asyncio.sleep(x))
+
+            payloads = get_gpu_payload(pynvml, x, i)
+            # print([file_handler.write(" --- " + str(payload.utilization)) for payload in get_gpu_payload(pynvml_handler, x, i)])
+            print(str([" --- " + str(p.utilization) for p in payloads]) + "\n")
             fu.add_done_callback(
-                lambda output: write_log_to_file(pynvml, file_handler, x, i)
+                #lambda output: write_log_to_file(pynvml, file_handler, x, i)
+                lambda output: write_log_to_file(file_handler, payloads)
             )
             await fu
 
