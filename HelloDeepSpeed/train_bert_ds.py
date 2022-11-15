@@ -2,26 +2,26 @@
 Modified version of train_bert.py that adds DeepSpeed
 """
 import asyncio
-import os
 import datetime
 import json
+import logging
+import os
 import pathlib
+import random
 import re
 import string
 from functools import partial
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 
-import random
 import datasets
+import deepspeed
 import fire
-import logging
 import loguru
 import numpy as np
 import pytz
 import sh
 import torch
 import torch.nn as nn
-import deepspeed
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.tensorboard import SummaryWriter
 from transformers import AutoTokenizer, PreTrainedTokenizer, PreTrainedTokenizerFast
@@ -785,6 +785,7 @@ def train(
     ################################
     log_dist("Creating DeepSpeed engine", ranks=[0], level=logging.INFO)
     ds_config = {
+        # Can be omitted if both train_batch_size and gradient_accumulation_steps are provided.
         "train_micro_batch_size_per_gpu": batch_size,
         "optimizer": {
             "type": "Adam",
@@ -792,15 +793,16 @@ def train(
                 "lr": 1e-4
             }
         },
-        "fp16": {
-            "enabled": True
-        },
-        "zero_optimization": {
-            "stage": 1,
-            "offload_optimizer": {
-                "device": "nvme"
-            }
-        }
+        # "fp16": {
+        #     "enabled": True
+        # },
+        #"zero_optimization": True
+        # "zero_optimization": {
+        #     "stage": 1,
+        #     "offload_optimizer": {
+        #         "device": "nvme"
+        #     }
+        # }
     }
     model, _, _, _ = deepspeed.initialize(model=model,
                                           model_parameters=model.parameters(),
@@ -825,6 +827,9 @@ def train(
     model.train()
     losses = []
     for step, batch in enumerate(data_iterator, start=start_step):
+        print("=" * 10)
+        print("step {0}, start_step {1}".format(step, start_step))
+        print(type(batch))
         if step >= num_iterations:
             break
         # Move the tensors to device

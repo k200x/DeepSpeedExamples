@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f064bbe-d0d8-4032-bed4-c080998e5650" name="Changes" comment="[Required]50-character subject line&#10;&#10;Code Source From: [Required]&#10;# Self Code / OpenSource / 3rd party Code / Other&#10;Description:  [Optional]&#10;Jira:  #[Optional]&#10;市场项目编号（名称）：[Optional]">
+      <change afterPath="$PROJECT_DIR$/pipeline_parallelism/hostfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pipeline_parallelism/run_multi_node.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HelloDeepSpeed/accelerate_rate/async_timer.py" beforeDir="false" afterPath="$PROJECT_DIR$/HelloDeepSpeed/accelerate_rate/async_timer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloDeepSpeed/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/HelloDeepSpeed/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloDeepSpeed/train_bert.py" beforeDir="false" afterPath="$PROJECT_DIR$/HelloDeepSpeed/train_bert.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloDeepSpeed/train_bert_ds.py" beforeDir="false" afterPath="$PROJECT_DIR$/HelloDeepSpeed/train_bert_ds.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pipeline_parallelism/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline_parallelism/run.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pipeline_parallelism/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline_parallelism/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +95,7 @@
       <workItem from="1667741001912" duration="675000" />
       <workItem from="1667741719781" duration="28478000" />
       <workItem from="1668240453402" duration="21689000" />
-      <workItem from="1668348281381" duration="21425000" />
+      <workItem from="1668348281381" duration="72026000" />
     </task>
     <servers />
   </component>

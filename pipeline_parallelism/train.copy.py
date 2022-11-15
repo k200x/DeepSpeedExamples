@@ -1,4 +1,3 @@
-import asyncio
 import os
 import argparse
 from time import time
@@ -14,8 +13,6 @@ from torchvision.models import vgg19
 import deepspeed
 from deepspeed.pipe import PipelineModule
 from deepspeed.utils import RepeatingLoader
-
-from HelloDeepSpeed.accelerate_rate.async_timer import timer
 
 
 def cifar_trainset(local_rank, dl_path='/tmp/cifar10-data'):
@@ -153,30 +150,41 @@ def train_pipe(args, part='parameters'):
 
 
 if __name__ == '__main__':
+    args = get_args()
+
+    deepspeed.init_distributed(dist_backend=args.backend)
+    args.local_rank = int(os.environ['LOCAL_RANK'])
+    print("-" * 20)
+    print("local_rank: {}".format(args.local_rank))
+    torch.cuda.set_device(args.local_rank)
+
+    if args.pipeline_parallel_size == 0:
+        train_base(args)
+    else:
+        train_pipe(args)
+
     from multiprocessing import Process
 
+
     def func1():
-        args = get_args()
+        import datetime
+        start_t = datetime.datetime.utcnow()
+        torch.manual_seed(42)
+        np.random.seed(0)
+        random.seed(0)
+        fire.Fire(train)
+        print(datetime.datetime.utcnow() - start_t)
 
-        deepspeed.init_distributed(dist_backend=args.backend)
-        args.local_rank = int(os.environ['LOCAL_RANK'])
-        print("-" * 20)
-        print("local_rank: {}".format(args.local_rank))
-        torch.cuda.set_device(args.local_rank)
-
-        if args.pipeline_parallel_size == 0:
-            train_base(args)
-        else:
-            train_pipe(args)
 
     def func2():
         t = timer(0.1)
         loop = asyncio.get_event_loop()
         loop.run_until_complete(t)
 
+
     process = [
-        Process(target=func1),
-        Process(target=func2),
+        Process(target=func1, ),
+        # Process(target=func2),
     ]
     [p.start() for p in process]
     [p.join() for p in process]
