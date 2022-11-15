@@ -15,7 +15,7 @@ import deepspeed
 from deepspeed.pipe import PipelineModule
 from deepspeed.utils import RepeatingLoader
 
-from accelerate_rate.async_timer import timer
+from async_timer import timer
 
 
 def cifar_trainset(local_rank, dl_path='/tmp/cifar10-data'):
